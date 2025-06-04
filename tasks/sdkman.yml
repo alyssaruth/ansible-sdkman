@@ -47,8 +47,10 @@
   loop: '{{ sdkman_uninstall_packages }}'
   register: sdk_uninstall
   changed_when: >-
-    not item.candidate + ' ' + item.version + ' is not installed.'
-    in sdk_uninstall.stdout
+    'is not installed' not in sdk_uninstall.stderr
+  failed_when: >-
+    sdk_uninstall.rc != 0 and
+    'is not installed' not in sdk_uninstall.stderr
 
 - name: Get SDK defaults
   shell: . {{ sdkman_dir }}/bin/sdkman-init.sh && sdk current {{ item }}
